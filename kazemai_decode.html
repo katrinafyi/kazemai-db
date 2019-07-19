@@ -68,14 +68,42 @@ function convert_formated_hex_to_string(s) {
         });
         // console.log(mstTxt);
     }
+
+    function parseCirnoSkills(html, indent) {
+      const container = document.createElement('div');
+      container.id = 'cirno-skills';
+      container.style.display = 'none';
+      container.innerHTML = html;
+      document.body.appendChild(container);
+      const entries = Array.from( 
+        container.querySelectorAll('tr > td.desc:nth-child(2)')
+      ).map(el => [el.childNodes[0].textContent.trim(), el.childNodes[2].textContent.trim()])
+      document.body.removeChild(container);
+      return Object.fromEntries(entries);
+    }
+
+    function saveCirnoSkills(indent) {
+      fetch('https://cors-anywhere.herokuapp.com/http://fate-go.cirnopedia.org/skill.php')
+        .then(r => r.text())
+        .then(r => parseCirnoSkills(r, indent))
+        .then(data => {
+          const f = new Blob([JSON.stringify(data)], {type: 'application/json'});
+          saveAs(f, 'skills.json');
+        });
+    }
         
     </script>
     </head>
     <body>
+        <h2> Kazemai Scraper </h2>
         <p>Parsing from https://raw.githubusercontent.com/KazeMai/fgo-vz/gh-pages/common/js/master.js
             </p>
         <button onclick="javascript:saveMasterJSON(2)">Save with indent</button> <br>
         <button onclick="javascript:saveMasterJSON(0)">Save without indent</button>
+
+        <h2> Cirnopedia Skills </h2>
+        <p> Parsing from http://fate-go.cirnopedia.org/skill.php </p>
+        <button onclick="javascript:saveCirnoSkills(0)">Save without indent</button> <br>
 
         </body>
 </html>

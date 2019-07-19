@@ -61,4 +61,4 @@ def make_db(json_file, db_file):
 
 
 if __name__ == "__main__":
-    make_db('fgo_master.json', 'fgo_db.sqlite')
+    make_db('fgo_master.json', 'fgo_master.sqlite')

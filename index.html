@@ -98,18 +98,20 @@ function convert_formated_hex_to_string(s) {
     }
 
     function saveGPServants() {
-      const json = document.getElementById('gp-json-input').value;
-      const data = JSON.parse(json);
-      const nameRegex = /hreflang="en">(.+?)<\/a/;
-      const entries = data.map(obj => {
-        return [obj.servant_id, {
-          name: he.decode(nameRegex.exec(obj.title)[1]),
-          class: obj.field_class,
-          stars: parseInt(obj.stars.split(' ')[0]),
-          release: obj.release_status,
-        }]
-      });
-      saveAsJSON(Object.fromEntries(entries), 'servants.json');
+      fetch(corsAnywhere + 'https://gamepress.gg//sites//default//files//aggregatedjson//servants-FGO.json')
+        .then(r => r.json())
+        .then(data => {
+          const nameRegex = /hreflang="en">(.+?)<\/a/;
+          const entries = data.map(obj => {
+            return [obj.servant_id, {
+              name: he.decode(nameRegex.exec(obj.title)[1]),
+              class: obj.field_class,
+              stars: parseInt(obj.stars.split(' ')[0]),
+              release: obj.release_status,
+            }]
+          });
+          saveAsJSON(Object.fromEntries(entries), 'servants.json');
+        });
     }
         
     </script>
@@ -126,9 +128,7 @@ function convert_formated_hex_to_string(s) {
         <button onclick="javascript:saveCirnoSkills(0)">Save without indent</button> <br>
 
         <h2> FGO GP Servants </h2>
-        <p> Paste the content of <a target="_blank" href="https://gamepress.gg//sites//default//files//aggregatedjson//servants-FGO.json">this JSON</a>
-        into the below box. </p>
-        <p><textarea id="gp-json-input"></textarea></p>
+        <p> Parsing from https://gamepress.gg//sites//default//files//aggregatedjson//servants-FGO.json </p>
         
         <button onclick="javascript:saveGPServants()">Save without indent</button> <br>
 
